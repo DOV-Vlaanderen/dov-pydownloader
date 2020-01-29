@@ -118,7 +118,7 @@ class AbstractSearch(AbstractCommon):
         """
         if AbstractSearch.__wfs is None:
             AbstractSearch.__wfs = WebFeatureService(
-                url=build_dov_url('geoserver/wfs'), version="1.1.0")
+                url=build_dov_url('geoserver/wfs'), version="2.0.0")
 
     def _init_namespace(self):
         """Initialise the WFS namespace associated with the layer.
@@ -182,7 +182,7 @@ class AbstractSearch(AbstractCommon):
         layername = self._layer.split(':')[1] if ':' in self._layer else \
             self._layer
         return get_remote_schema(
-            build_dov_url('geoserver/wfs'), layername, '1.1.0')
+            build_dov_url('geoserver/wfs'), layername, '2.0.0')
 
     def _get_namespace(self):
         """Get the WFS namespace of the layer.
@@ -533,6 +533,7 @@ class AbstractSearch(AbstractCommon):
             Response of the WFS service.
 
         """
+        breakpoint()
         wfs_getfeature_xml = owsutil.wfs_build_getfeature_request(
             version=wfs.version,
             geometry_column=geometry_column,

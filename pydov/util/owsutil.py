@@ -335,7 +335,7 @@ def get_namespace(wfs, layer):
 
     """
     from owslib.feature.schema import _get_describefeaturetype_url
-    url = _get_describefeaturetype_url(url=wfs.url, version='1.1.0',
+    url = _get_describefeaturetype_url(url=wfs.url, version='2.0.0',
                                        typename=layer)
     schema = __get_remote_describefeaturetype(url)
     tree = etree.fromstring(schema)
@@ -476,7 +476,7 @@ def set_geometry_column(location, geometry_column):
 
 def wfs_build_getfeature_request(typename, geometry_column=None, location=None,
                                  filter=None, sort_by=None, propertyname=None,
-                                 max_features=None, version='1.1.0'):
+                                 max_features=None, version='2.0.0'):
     """Build a WFS GetFeature request in XML to be used as payload in a WFS
     GetFeature request using POST.
 
@@ -516,36 +516,36 @@ def wfs_build_getfeature_request(typename, geometry_column=None, location=None,
         raise AttributeError('location requires geometry_column and it is '
                              'None')
 
-    xml = etree.Element('{http://www.opengis.net/wfs}GetFeature')
+    xml = etree.Element('{http://www.opengis.net/wfs/2.0}GetFeature')
     xml.set('service', 'WFS')
     xml.set('version', version)
 
     if max_features is not None:
         if (not isinstance(max_features, int)) or (max_features <= 0):
             raise AttributeError('max_features should be a positive integer')
-        xml.set('maxFeatures', str(max_features))
+        xml.set('count', str(max_features))
 
     xml.set('{http://www.w3.org/2001/XMLSchema-instance}schemaLocation',
-            'http://www.opengis.net/wfs '
+            'http://www.opengis.net/wfs/2.0 '
             'http://schemas.opengis.net/wfs/{}/wfs.xsd'.format(version))
 
-    query = etree.Element('{http://www.opengis.net/wfs}Query')
-    query.set('typeName', typename)
+    query = etree.Element('{http://www.opengis.net/wfs/2.0}Query')
+    query.set('typeNames', typename)
 
     if propertyname and len(propertyname) > 0:
         for property in propertyname:
             propertyname_xml = etree.Element(
-                '{http://www.opengis.net/wfs}PropertyName')
+                '{http://www.opengis.net/wfs/2.0}PropertyName')
             propertyname_xml.text = property
             query.append(propertyname_xml)
 
-    filter_xml = etree.Element('{http://www.opengis.net/ogc}Filter')
+    filter_xml = etree.Element('{http://www.opengis.net/fes/2.0}Filter')
     filter_parent = filter_xml
 
     if filter is not None and location is not None:
         # if both filter and location are specified, we wrap them inside an
         # ogc:And
-        and_xml = etree.Element('{http://www.opengis.net/ogc}And')
+        and_xml = etree.Element('{http://www.opengis.net/fes/2.0}And')
         filter_xml.append(and_xml)
         filter_parent = and_xml
 

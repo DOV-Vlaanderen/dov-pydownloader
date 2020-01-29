@@ -109,9 +109,9 @@ class AbstractBinarySpatialFilter(AbstractLocationFilter):
         self.geom_column = ''
 
         self.element = etree.Element(
-            '{{http://www.opengis.net/ogc}}{}'.format(type))
+            '{{http://www.opengis.net/fes/2.0}}{}'.format(type))
 
-        geom = etree.Element('{http://www.opengis.net/ogc}PropertyName')
+        geom = etree.Element('{http://www.opengis.net/fes/2.0}ValueReference')
         geom.text = self.geom_column
 
         self.element.append(geom)
@@ -127,7 +127,7 @@ class AbstractBinarySpatialFilter(AbstractLocationFilter):
 
         """
         self.geom_column = geometry_column
-        geom = self.element.find('.//{http://www.opengis.net/ogc}PropertyName')
+        geom = self.element.find('.//{http://www.opengis.net/fes/2.0}ValueReference')
         geom.text = geometry_column
 
     def toXML(self):
@@ -194,17 +194,17 @@ class Box(AbstractLocation):
         self.maxx = maxx
         self.maxy = maxy
 
-        self.element = etree.Element('{http://www.opengis.net/gml}Envelope')
+        self.element = etree.Element('{http://www.opengis.net/gml/3.2}Envelope')
         self.element.set('srsDimension', '2')
         self.element.set(
             'srsName',
             'http://www.opengis.net/gml/srs/epsg.xml#{:d}'.format(epsg))
 
-        lower_corner = etree.Element('{http://www.opengis.net/gml}lowerCorner')
+        lower_corner = etree.Element('{http://www.opengis.net/gml/3.2}lowerCorner')
         lower_corner.text = '{:.06f} {:.06f}'.format(self.minx, self.miny)
         self.element.append(lower_corner)
 
-        upper_corner = etree.Element('{http://www.opengis.net/gml}upperCorner')
+        upper_corner = etree.Element('{http://www.opengis.net/gml/3.2}upperCorner')
         upper_corner.text = '{:.06f} {:.06f}'.format(self.maxx, self.maxy)
         self.element.append(upper_corner)
 
@@ -243,13 +243,13 @@ class Point(AbstractLocation):
         self.x = x
         self.y = y
 
-        self.element = etree.Element('{http://www.opengis.net/gml}Point')
+        self.element = etree.Element('{http://www.opengis.net/gml/3.2}Point')
         self.element.set('srsDimension', '2')
         self.element.set(
             'srsName',
             'http://www.opengis.net/gml/srs/epsg.xml#{:d}'.format(epsg))
 
-        coordinates = etree.Element('{http://www.opengis.net/gml}pos')
+        coordinates = etree.Element('{http://www.opengis.net/gml/3.2}pos')
         coordinates.text = '{:.06f} {:.06f}'.format(self.x, self.y)
         self.element.append(coordinates)
 
@@ -427,12 +427,12 @@ class WithinDistance(AbstractLocationFilter):
         self.distance_unit = distance_unit
         self.geom_column = ''
 
-        self.element = etree.Element('{http://www.opengis.net/ogc}DWithin')
+        self.element = etree.Element('{http://www.opengis.net/fes/2.0}DWithin')
 
-        geom = etree.Element('{http://www.opengis.net/ogc}PropertyName')
+        geom = etree.Element('{http://www.opengis.net/fes/2.0}ValueReference')
         geom.text = self.geom_column
 
-        distance = etree.Element('{http://www.opengis.net/ogc}Distance')
+        distance = etree.Element('{http://www.opengis.net/fes/2.0}Distance')
         distance.set('units', self.distance_unit)
         distance.text = '{:.06f}'.format(self.distance)
 
@@ -450,7 +450,7 @@ class WithinDistance(AbstractLocationFilter):
 
         """
         self.geom_column = geometry_column
-        geom = self.element.find('.//{http://www.opengis.net/ogc}PropertyName')
+        geom = self.element.find('.//{http://www.opengis.net/fes/2.0}ValueReference')
         geom.text = geometry_column
 
     def toXML(self):
@@ -594,8 +594,8 @@ class GmlFilter(AbstractLocationFilter):
         """
         points, multipoints = self._dedup_multi(
             gml_tree,
-            './/{http://www.opengis.net/gml}Point',
-            './/{http://www.opengis.net/gml}MultiPoint'
+            './/{http://www.opengis.net/gml/3.2}Point',
+            './/{http://www.opengis.net/gml/3.2}MultiPoint'
         )
 
         self.subelements.update(points)
@@ -603,8 +603,8 @@ class GmlFilter(AbstractLocationFilter):
 
         linestrings, multicurves = self._dedup_multi(
             gml_tree,
-            './/{http://www.opengis.net/gml}LineString',
-            './/{http://www.opengis.net/gml}MultiCurve'
+            './/{http://www.opengis.net/gml/3.2}LineString',
+            './/{http://www.opengis.net/gml/3.2}MultiCurve'
         )
 
         self.subelements.update(linestrings)
@@ -612,8 +612,8 @@ class GmlFilter(AbstractLocationFilter):
 
         polygons, multisurfaces = self._dedup_multi(
             gml_tree,
-            './/{http://www.opengis.net/gml}Polygon',
-            './/{http://www.opengis.net/gml}MultiSurface')
+            './/{http://www.opengis.net/gml/3.2}Polygon',
+            './/{http://www.opengis.net/gml/3.2}MultiSurface')
 
         self.subelements.update(polygons)
         self.subelements.update(multisurfaces)

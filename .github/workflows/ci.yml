@@ -68,6 +68,9 @@ jobs:
       matrix:
         os: ["ubuntu-latest", "windows-latest"]
         python-version: ["3.6", "3.7", "3.8", "3.9"]
+        exclude:
+          - os: "windows-latest"
+            python-version: "3.6"
     steps:
       - uses: "actions/checkout@v2"
       - uses: conda-incubator/setup-miniconda@v2
@@ -83,22 +86,13 @@ jobs:
         run: |
           conda update -n base -c defaults conda
           conda install --name pydov --file requirements.txt
+          conda install --name pydov --file requirements_vectorfile.txt
           conda list
       - name: Install development dependencies with pip
         shell: pwsh
         run: |
           pip install -r requirements_dev.txt
           conda list
-      - name: Install development dependencies on Windows
-        if: ${{ matrix.os == 'windows-latest' }}
-        shell: pwsh
-        run: |
-          pip install pipwin
-          pipwin install -r requirements_vectorfile.txt
-      - name: Install development dependencies on Ubuntu
-        if: ${{ matrix.os == 'ubuntu-latest' }}
-        shell: pwsh
-        run: pip install -r requirements_vectorfile.txt
       - name: Run unit tests
         shell: pwsh
         run: |
